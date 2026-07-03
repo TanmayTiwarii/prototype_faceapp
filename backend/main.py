@@ -33,6 +33,13 @@ VisionRunningMode = mp.tasks.vision.RunningMode
 # Get absolute path to the backend directory
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Bulletproof: Force download models on startup if they are missing
+try:
+    import download_models
+    download_models.download_models()
+except Exception as e:
+    print(f"Error executing download_models on startup: {e}")
+
 print(f"--- FACELAB DIAGNOSTICS ---")
 print(f"CURRENT_DIR: {CURRENT_DIR}")
 try:
