@@ -67,7 +67,7 @@ print(f"Checking Age Models: {age_model_path} -> Exists? {os.path.exists(age_mod
 age_net = None
 if os.path.exists(age_model_path) and os.path.exists(age_proto_path):
     try:
-        age_net = cv2.dnn.readNetFromCaffe(age_proto_path, age_model_path)
+        age_net = cv2.dnn.readNet(age_proto_path, age_model_path)
         print("Age Net Model Loaded Successfully.")
     except Exception as e:
         print(f"Error loading Age Net Model: {e}")
