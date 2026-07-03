@@ -30,24 +30,14 @@ def decode_image(file_bytes):
 BaseOptions = mp.tasks.BaseOptions
 VisionRunningMode = mp.tasks.vision.RunningMode
 
-# Face Detection setup
-FaceDetector = mp.tasks.vision.FaceDetector
-FaceDetectorOptions = mp.tasks.vision.FaceDetectorOptions
-
-face_model_path = os.path.join(os.path.dirname(__file__), "blaze_face_short_range.tflite")
-face_detector = None
-if os.path.exists(face_model_path):
-    fd_options = FaceDetectorOptions(
-        base_options=BaseOptions(model_asset_path=face_model_path),
-        running_mode=VisionRunningMode.IMAGE
-    )
-    face_detector = FaceDetector.create_from_options(fd_options)
+# Get absolute path to the backend directory
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Face Detection setup
 FaceDetector = mp.tasks.vision.FaceDetector
 FaceDetectorOptions = mp.tasks.vision.FaceDetectorOptions
 
-face_model_path = os.path.join(os.path.dirname(__file__), "blaze_face_short_range.tflite")
+face_model_path = os.path.join(CURRENT_DIR, "blaze_face_short_range.tflite")
 face_detector = None
 if os.path.exists(face_model_path):
     fd_options = FaceDetectorOptions(
@@ -57,8 +47,8 @@ if os.path.exists(face_model_path):
     face_detector = FaceDetector.create_from_options(fd_options)
 
 # Age Guess setup
-age_model_path = os.path.join(os.path.dirname(__file__), "age_net.caffemodel")
-age_proto_path = os.path.join(os.path.dirname(__file__), "age_deploy.prototxt")
+age_model_path = os.path.join(CURRENT_DIR, "age_net.caffemodel")
+age_proto_path = os.path.join(CURRENT_DIR, "age_deploy.prototxt")
 age_net = None
 if os.path.exists(age_model_path) and os.path.exists(age_proto_path):
     age_net = cv2.dnn.readNetFromCaffe(age_proto_path, age_model_path)
@@ -68,7 +58,7 @@ AGE_LIST = ['(0-2)', '(4-6)', '(8-12)', '(15-20)', '(25-32)', '(38-43)', '(48-53
 FaceLandmarker = mp.tasks.vision.FaceLandmarker
 FaceLandmarkerOptions = mp.tasks.vision.FaceLandmarkerOptions
 
-face_landmarker_path = os.path.join(os.path.dirname(__file__), "face_landmarker.task")
+face_landmarker_path = os.path.join(CURRENT_DIR, "face_landmarker.task")
 landmarker = None
 if os.path.exists(face_landmarker_path):
     options = FaceLandmarkerOptions(
@@ -81,7 +71,7 @@ if os.path.exists(face_landmarker_path):
 ImageSegmenter = mp.tasks.vision.ImageSegmenter
 ImageSegmenterOptions = mp.tasks.vision.ImageSegmenterOptions
 
-segmenter_path = os.path.join(os.path.dirname(__file__), "hair_segmenter.tflite")
+segmenter_path = os.path.join(CURRENT_DIR, "hair_segmenter.tflite")
 segmenter = None
 if os.path.exists(segmenter_path):
     options = ImageSegmenterOptions(
