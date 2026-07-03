@@ -25,13 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Handle tool selection
-    tools.forEach(tool => {
-        tool.addEventListener('click', async () => {
-            if (!currentFile) {
-                alert('Please upload a photo first!');
-                return;
-            }
+    // Execute feature function
+    window.executeFeature = async (tool) => {
+        if (!currentFile) {
+            alert('Please upload a photo first!');
+            return;
+        }
 
             const feature = tool.getAttribute('data-feature');
             
@@ -85,11 +84,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     resultText.innerHTML = `<strong>Success!</strong> ${data.message}`;
                 }
                 
-            } catch (error) {
-                console.error('Error:', error);
-                loader.classList.add('hidden');
-                resultText.innerHTML = `<span style="color: #ff4444;">Error processing image. Make sure the FastAPI backend is running!</span>`;
-            }
-        });
+        } catch (error) {
+            console.error('Error:', error);
+            loader.classList.add('hidden');
+            resultText.innerHTML = `<span style="color: #ff4444;">Error processing image. Make sure the FastAPI backend is running!</span>`;
+        }
+    };
+
+    // Bind event listeners
+    tools.forEach(tool => {
+        if (tool.getAttribute('data-feature') === 'hair-color') {
+            // Do not bind click to the whole card for hair-color
+            return;
+        }
+        tool.addEventListener('click', () => executeFeature(tool));
     });
+
+    // Explicit trigger for Hair Color OK button
+    window.triggerHairColor = () => {
+        const tool = document.querySelector('.tool-card[data-feature="hair-color"]');
+        executeFeature(tool);
+    };
 });

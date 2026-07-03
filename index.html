@@ -38,11 +38,17 @@
                 <h3>Age Guess</h3>
                 <p>Estimate age for detected faces</p>
             </div>
-            <div class="tool-card" data-feature="hair-color">
+            <div class="tool-card" data-feature="hair-color" style="cursor: default;">
                 <h3>Hair Color</h3>
                 <p>Change your hair color</p>
-                <button class="choose-color-btn" onclick="document.getElementById('hair-color-picker').click(); event.stopPropagation();">Choose Color</button>
-                <input type="color" id="hair-color-picker" value="#800080" style="visibility:hidden; position:absolute;" onclick="event.stopPropagation()">
+                <div style="display:flex; gap:10px; justify-content:center; align-items:center; margin-top:15px;">
+                    <button class="choose-color-btn" style="margin-top:0; padding: 10px 15px;" onclick="document.getElementById('hair-color-picker').click();">
+                        <span id="color-preview" style="display:inline-block; width:16px; height:16px; border-radius:50%; background:#800080; margin-right:6px; vertical-align:middle; border:1px solid rgba(255,255,255,0.3);"></span>
+                        Pick
+                    </button>
+                    <button class="choose-color-btn" style="margin-top:0; padding: 10px 20px; background: var(--primary); border-color: var(--primary);" onclick="triggerHairColor()">OK</button>
+                </div>
+                <input type="color" id="hair-color-picker" value="#800080" style="visibility:hidden; position:absolute;" oninput="document.getElementById('color-preview').style.background = this.value;">
             </div>
             <div class="tool-card" data-feature="face-shape">
                 <h3>Face Shape</h3>
