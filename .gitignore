@@ -8,10 +8,6 @@ env.bak/
 venv.bak/
 
 # Models (downloaded during build.sh)
-*.tflite
-*.caffemodel
-*.prototxt
-*.task
 
 # Python
 __pycache__/
