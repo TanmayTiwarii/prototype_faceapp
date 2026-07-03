@@ -33,25 +33,46 @@ VisionRunningMode = mp.tasks.vision.RunningMode
 # Get absolute path to the backend directory
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+print(f"--- FACELAB DIAGNOSTICS ---")
+print(f"CURRENT_DIR: {CURRENT_DIR}")
+try:
+    print(f"Files in CURRENT_DIR: {os.listdir(CURRENT_DIR)}")
+except Exception as e:
+    print(f"Error listing CURRENT_DIR: {e}")
+
 # Face Detection setup
 FaceDetector = mp.tasks.vision.FaceDetector
 FaceDetectorOptions = mp.tasks.vision.FaceDetectorOptions
 
 face_model_path = os.path.join(CURRENT_DIR, "blaze_face_short_range.tflite")
+print(f"Checking Face Detector Model: {face_model_path} -> Exists? {os.path.exists(face_model_path)}")
 face_detector = None
 if os.path.exists(face_model_path):
-    fd_options = FaceDetectorOptions(
-        base_options=BaseOptions(model_asset_path=face_model_path),
-        running_mode=VisionRunningMode.IMAGE
-    )
-    face_detector = FaceDetector.create_from_options(fd_options)
+    try:
+        fd_options = FaceDetectorOptions(
+            base_options=BaseOptions(model_asset_path=face_model_path),
+            running_mode=VisionRunningMode.IMAGE
+        )
+        face_detector = FaceDetector.create_from_options(fd_options)
+        print("Face Detector Model Loaded Successfully.")
+    except Exception as e:
+        print(f"Error loading Face Detector Model: {e}")
+else:
+    print("Face Detector Model NOT FOUND.")
 
 # Age Guess setup
 age_model_path = os.path.join(CURRENT_DIR, "age_net.caffemodel")
 age_proto_path = os.path.join(CURRENT_DIR, "age_deploy.prototxt")
+print(f"Checking Age Models: {age_model_path} -> Exists? {os.path.exists(age_model_path)} | Proto -> Exists? {os.path.exists(age_proto_path)}")
 age_net = None
 if os.path.exists(age_model_path) and os.path.exists(age_proto_path):
-    age_net = cv2.dnn.readNetFromCaffe(age_proto_path, age_model_path)
+    try:
+        age_net = cv2.dnn.readNetFromCaffe(age_proto_path, age_model_path)
+        print("Age Net Model Loaded Successfully.")
+    except Exception as e:
+        print(f"Error loading Age Net Model: {e}")
+else:
+    print("Age Models NOT FOUND.")
 AGE_LIST = ['(0-2)', '(4-6)', '(8-12)', '(15-20)', '(25-32)', '(38-43)', '(48-53)', '(60-100)']
 
 # Face Landmarker setup
@@ -59,28 +80,43 @@ FaceLandmarker = mp.tasks.vision.FaceLandmarker
 FaceLandmarkerOptions = mp.tasks.vision.FaceLandmarkerOptions
 
 face_landmarker_path = os.path.join(CURRENT_DIR, "face_landmarker.task")
+print(f"Checking Face Landmarker Model: {face_landmarker_path} -> Exists? {os.path.exists(face_landmarker_path)}")
 landmarker = None
 if os.path.exists(face_landmarker_path):
-    options = FaceLandmarkerOptions(
-        base_options=BaseOptions(model_asset_path=face_landmarker_path),
-        running_mode=VisionRunningMode.IMAGE
-    )
-    landmarker = FaceLandmarker.create_from_options(options)
+    try:
+        options = FaceLandmarkerOptions(
+            base_options=BaseOptions(model_asset_path=face_landmarker_path),
+            running_mode=VisionRunningMode.IMAGE
+        )
+        landmarker = FaceLandmarker.create_from_options(options)
+        print("Face Landmarker Model Loaded Successfully.")
+    except Exception as e:
+        print(f"Error loading Face Landmarker Model: {e}")
+else:
+    print("Face Landmarker Model NOT FOUND.")
 
 # Hair Color setup
 ImageSegmenter = mp.tasks.vision.ImageSegmenter
 ImageSegmenterOptions = mp.tasks.vision.ImageSegmenterOptions
 
 segmenter_path = os.path.join(CURRENT_DIR, "hair_segmenter.tflite")
+print(f"Checking Segmenter Model: {segmenter_path} -> Exists? {os.path.exists(segmenter_path)}")
 segmenter = None
 if os.path.exists(segmenter_path):
-    options = ImageSegmenterOptions(
-        base_options=BaseOptions(model_asset_path=segmenter_path),
-        running_mode=VisionRunningMode.IMAGE,
-        output_category_mask=False,
-        output_confidence_masks=True
-    )
-    segmenter = ImageSegmenter.create_from_options(options)
+    try:
+        options = ImageSegmenterOptions(
+            base_options=BaseOptions(model_asset_path=segmenter_path),
+            running_mode=VisionRunningMode.IMAGE,
+            output_category_mask=False,
+            output_confidence_masks=True
+        )
+        segmenter = ImageSegmenter.create_from_options(options)
+        print("Segmenter Model Loaded Successfully.")
+    except Exception as e:
+        print(f"Error loading Segmenter Model: {e}")
+else:
+    print("Segmenter Model NOT FOUND.")
+print(f"---------------------------")
 
 @app.post("/api/face-detect")
 async def face_detect(file: UploadFile = File(...)):
