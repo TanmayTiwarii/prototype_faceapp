@@ -1,4 +1,5 @@
 import os
+import sys
 import urllib.request
 
 MODELS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -14,6 +15,11 @@ MODELS = {
 
 def download_models():
     print("Downloading required models...")
+    # Add a realistic User-Agent to prevent cloud servers from blocking the python default agent
+    opener = urllib.request.build_opener()
+    opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)')]
+    urllib.request.install_opener(opener)
+
     for filename, url in MODELS.items():
         filepath = os.path.join(MODELS_DIR, filename)
         if not os.path.exists(filepath):
@@ -22,7 +28,8 @@ def download_models():
                 urllib.request.urlretrieve(url, filepath)
                 print(f"Successfully downloaded {filename}.")
             except Exception as e:
-                print(f"Failed to download {filename}: {e}")
+                print(f"CRITICAL ERROR: Failed to download {filename}: {e}")
+                sys.exit(1) # Fail the build explicitly
         else:
             print(f"{filename} already exists, skipping.")
     print("Model download complete.")
