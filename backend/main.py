@@ -198,7 +198,11 @@ async def age_guess(file: UploadFile = File(...)):
             cv2.putText(img, f"Age: {age}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
             
     base64_img = encode_image(img)
-    msg = f"Guessed age for {len(age_preds)} faces." if age_preds else "No faces detected."
+    if age_preds:
+        ages_str = ", ".join(age_preds)
+        msg = f"Guessed age for {len(age_preds)} face(s): {ages_str}"
+    else:
+        msg = "No faces detected."
     return {
         "status": "success",
         "message": msg,
