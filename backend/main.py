@@ -172,11 +172,11 @@ async def age_guess(file: UploadFile = File(...)):
             ih, iw, _ = img.shape
             
             # Calculate center and make a square bounding box with padding
-            # This preserves aspect ratio and prevents the Caffe model from squishing the face,
-            # which drastically improves age detection accuracy.
+            # This preserves aspect ratio and prevents the Caffe model from squishing the face.
+            # A tighter crop (1.1x) is required for the Adience model to focus on facial features.
             cx = x + w // 2
             cy = y + h // 2
-            size = int(max(w, h) * 1.5)
+            size = int(max(w, h) * 1.1)
             half_size = size // 2
             
             x1 = max(0, cx - half_size)
