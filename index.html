@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FaceLab App - Premium AI Face Editor</title>
+    <title>FaceLab App - AI Face Editor</title>
     <link rel="stylesheet" href="index.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar">
         <div class="logo">FaceLab</div>
-        <button class="premium-btn">Upgrade to Premium</button>
     </nav>
 
     <header class="hero">
@@ -42,7 +41,8 @@
             <div class="tool-card" data-feature="hair-color">
                 <h3>Hair Color</h3>
                 <p>Change your hair color</p>
-                <input type="color" id="hair-color-picker" value="#800080" class="color-picker" title="Choose hair color" onclick="event.stopPropagation()">
+                <button class="choose-color-btn" onclick="document.getElementById('hair-color-picker').click(); event.stopPropagation();">Choose Color</button>
+                <input type="color" id="hair-color-picker" value="#800080" style="visibility:hidden; position:absolute;" onclick="event.stopPropagation()">
             </div>
             <div class="tool-card" data-feature="face-shape">
                 <h3>Face Shape</h3>
@@ -54,9 +54,6 @@
             <h2>Processing Result</h2>
             <div class="loader" id="loader"></div>
             <p id="result-text"></p>
-            <div class="premium-ad">
-                <p>Remove Watermarks with Premium!</p>
-            </div>
         </div>
     </main>
 
