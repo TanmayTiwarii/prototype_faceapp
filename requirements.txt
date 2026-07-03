@@ -3,4 +3,4 @@ uvicorn
 python-multipart
 opencv-contrib-python==4.7.0.72
 mediapipe
-numpy
+numpy<2.0.0
