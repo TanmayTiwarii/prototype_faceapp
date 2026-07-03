@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceLab App - Premium AI Face Editor</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">FaceLab</div>
+        <button class="premium-btn">Upgrade to Premium</button>
+    </nav>
+
+    <header class="hero">
+        <h1>Transform Your Look Instantly</h1>
+        <p>Experience the power of AI with Aging, Gender Swap, and Face Shape detection.</p>
+    </header>
+
+    <main class="app-container">
+        <div class="upload-section" id="upload-section">
+            <input type="file" id="file-input" accept="image/*" hidden>
+            <button class="upload-btn" onclick="document.getElementById('file-input').click()">
+                Upload Photo
+            </button>
+            <p class="upload-text">or drag and drop your photo here</p>
+            <div id="image-preview" class="image-preview hidden">
+                <img id="preview-img" src="" alt="Preview">
+            </div>
+        </div>
+
+        <div class="tools-grid">
+            <div class="tool-card" data-feature="face-detect">
+                <h3>Face Detector</h3>
+                <p>Detect faces and draw bounding boxes</p>
+            </div>
+            <div class="tool-card" data-feature="age-guess">
+                <h3>Age Guess</h3>
+                <p>Estimate age for detected faces</p>
+            </div>
+            <div class="tool-card" data-feature="hair-color">
+                <h3>Hair Color</h3>
+                <p>Change your hair color</p>
+                <input type="color" id="hair-color-picker" value="#800080" class="color-picker" title="Choose hair color" onclick="event.stopPropagation()">
+            </div>
+            <!-- Disabled features -->
+            <div class="tool-card disabled">
+                <h3>Gender Swap</h3>
+                <p>Premium feature</p>
+            </div>
+            <div class="tool-card" data-feature="face-shape">
+                <h3>Face Shape</h3>
+                <p>Premium feature</p>
+            </div>
+            <div class="tool-card disabled">
+                <h3>AI Aging</h3>
+                <p>Premium feature</p>
+            </div>
+        </div>
+
+        <div id="result-section" class="result-section hidden">
+            <h2>Processing Result</h2>
+            <div class="loader" id="loader"></div>
+            <p id="result-text"></p>
+            <div class="premium-ad">
+                <p>Remove Watermarks with Premium!</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
