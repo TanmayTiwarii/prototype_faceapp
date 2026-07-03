@@ -190,12 +190,16 @@ async def age_guess(file: UploadFile = File(...)):
                 
             blob = cv2.dnn.blobFromImage(face_img, 1.0, (227, 227), (78.4263377603, 87.7689143744, 114.895847746), swapRB=False)
             age_net.setInput(blob)
-            preds = age_net.forward()
-            age = AGE_LIST[preds[0].argmax()]
-            age_preds.append(age)
+            preds = age_net.forward()[0]
+            
+            # Use Expected Value (weighted average) instead of argmax to counteract the 25-32 bias
+            age_means = [1.5, 5.0, 10.0, 17.5, 28.5, 40.5, 50.5, 80.0]
+            expected_age = sum(p * m for p, m in zip(preds, age_means))
+            age_str = str(int(round(expected_age)))
+            age_preds.append(age_str)
             
             cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
-            cv2.putText(img, f"Age: {age}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
+            cv2.putText(img, f"Age: {age_str}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
             
     base64_img = encode_image(img)
     if age_preds:
