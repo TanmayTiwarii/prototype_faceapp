@@ -64,20 +64,6 @@ if os.path.exists(face_model_path):
 else:
     print("Face Detector Model NOT FOUND.")
 
-# Age Guess setup
-age_model_path = os.path.join(CURRENT_DIR, "age_net.caffemodel")
-age_proto_path = os.path.join(CURRENT_DIR, "age_deploy.prototxt")
-print(f"Checking Age Models: {age_model_path} -> Exists? {os.path.exists(age_model_path)} | Proto -> Exists? {os.path.exists(age_proto_path)}")
-age_net = None
-if os.path.exists(age_model_path) and os.path.exists(age_proto_path):
-    try:
-        age_net = cv2.dnn.readNet(age_proto_path, age_model_path)
-        print("Age Net Model Loaded Successfully.")
-    except Exception as e:
-        print(f"Error loading Age Net Model: {e}")
-else:
-    print("Age Models NOT FOUND.")
-AGE_LIST = ['(0-2)', '(4-6)', '(8-12)', '(15-20)', '(25-32)', '(38-43)', '(48-53)', '(60-100)']
 
 # Face Landmarker setup
 FaceLandmarker = mp.tasks.vision.FaceLandmarker
@@ -151,67 +137,7 @@ async def face_detect(file: UploadFile = File(...)):
         "result_b64": f"data:image/jpeg;base64,{base64_img}"
     }
 
-@app.post("/api/age-guess")
-async def age_guess(file: UploadFile = File(...)):
-    if age_net is None:
-        return {"status": "error", "message": "Age model not loaded. Run setup scripts first."}
-        
-    img = decode_image(await file.read())
-    if img is None:
-        return {"status": "error", "message": "Invalid image"}
-        
-    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=img_rgb)
-    results = face_detector.detect(mp_image)
-    
-    age_preds = []
-    if results.detections:
-        for detection in results.detections:
-            bboxC = detection.bounding_box
-            x, y, w, h = bboxC.origin_x, bboxC.origin_y, bboxC.width, bboxC.height
-            ih, iw, _ = img.shape
-            
-            # Calculate center and make a square bounding box with padding
-            # This preserves aspect ratio and prevents the Caffe model from squishing the face.
-            # A tighter crop (1.1x) is required for the Adience model to focus on facial features.
-            cx = x + w // 2
-            cy = y + h // 2
-            size = int(max(w, h) * 1.1)
-            half_size = size // 2
-            
-            x1 = max(0, cx - half_size)
-            y1 = max(0, cy - half_size)
-            x2 = min(iw, cx + half_size)
-            y2 = min(ih, cy + half_size)
-            
-            face_img = img[y1:y2, x1:x2].copy()
-            if face_img.size == 0:
-                continue
-                
-            blob = cv2.dnn.blobFromImage(face_img, 1.0, (227, 227), (78.4263377603, 87.7689143744, 114.895847746), swapRB=False)
-            age_net.setInput(blob)
-            preds = age_net.forward()[0]
-            
-            # Use Expected Value (weighted average) instead of argmax to counteract the 25-32 bias
-            age_means = [1.5, 5.0, 10.0, 17.5, 28.5, 40.5, 50.5, 80.0]
-            expected_age = sum(p * m for p, m in zip(preds, age_means))
-            age_str = str(int(round(expected_age)))
-            age_preds.append(age_str)
-            
-            cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
-            cv2.putText(img, f"Age: {age_str}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
-            
-    base64_img = encode_image(img)
-    if age_preds:
-        ages_str = ", ".join(age_preds)
-        msg = f"Guessed age for {len(age_preds)} face(s): {ages_str}"
-    else:
-        msg = "No faces detected."
-    return {
-        "status": "success",
-        "message": msg,
-        "result_b64": f"data:image/jpeg;base64,{base64_img}"
-    }
+
 
 @app.post("/api/hair-color")
 async def hair_color(file: UploadFile = File(...), color: Optional[str] = Form(None)):
